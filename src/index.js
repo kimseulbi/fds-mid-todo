@@ -63,7 +63,6 @@ async function drawTodoList() {
   // 2. 내용 채우고 이벤트 리스너 등록하기
   const todoListEl = fragment.querySelector(".todo-list");
   const todoFormEl = fragment.querySelector(".todo-form");
-  const deleteButtonEl = fragment.querySelector(".delete -button");
 
   todoFormEl.addEventListener("submit", async e => {
     e.preventDefault();
@@ -81,15 +80,26 @@ async function drawTodoList() {
   list.forEach(todoItem => {
     // 1. 템플릿 복사하기
     const fragment = document.importNode(templates.todoItem, true);
-
     // 2. 내용 채우고 이벤트 리스너 등록하기
     const bodyEl = fragment.querySelector(".body");
-
+    const deleteButtonEl = fragment.querySelector(".delete-button");
+    const todoItemEl = fragment.querySelector(".todo-item");
     bodyEl.textContent = todoItem.body;
 
     // 3. 문서 내부에 삽입하기
     todoListEl.appendChild(fragment);
+
+    // * 삭제 기능 구현 전략 *
+    // 1. 삭제 버튼을 눌렀을 때
+    deleteButtonEl.addEventListener('click', async e => {
+      todoListEl.removeChild(todoItemEl);
+      await api.delete(`/todos/${todoItem.id}`);
+    })
+    // 2. 할 일 항목을 삭제하는 요청을 서버에 보내고
+
+    // 3. drawTodoList 함수를 호출해서 페이지를 새로 그린다. (edited)
   });
+
 
   // 3. 문서 내부에 삽입하기
   rootEl.textContent = "";
