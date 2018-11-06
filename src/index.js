@@ -90,13 +90,15 @@ async function drawTodoList() {
     todoListEl.appendChild(fragment);
 
     // * 삭제 기능 구현 전략 *
-    // 1. 삭제 버튼을 눌렀을 때
+    // (내가 한 삭제)
     // deleteButtonEl.addEventListener('click', async e => {
     //   // 삭제 요청 보내기
     //   // 성공 시 할일 목록 다시 그리기
     //   todoListEl.removeChild(todoItemEl);
     //   await api.delete(`/todos/${todoItem.id}`);
     // })
+
+    // (선생님이 한 삭제)
     deleteButtonEl.addEventListener('click', async e => {
       // 삭제 요청 보내기
       await api.delete('/todos/'+ todoItem.id);
@@ -114,4 +116,13 @@ async function drawTodoList() {
   rootEl.appendChild(fragment);
 }
 
+// 새로그리기
+// 만약 로그인을 한 상태라면 바로 할일 목록을 보여주고
+if (localStorage.getItem('token')){
+// token을 저장한 적이 있다면 true, 없다면 false
+  drawTodoList()
+} else{
+  // 아니라면 로그인 폼을 보여준다.
+  drawLoginForm()
+}
 drawLoginForm();
