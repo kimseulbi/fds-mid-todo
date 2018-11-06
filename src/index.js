@@ -74,16 +74,20 @@ async function drawTodoList() {
   });
 
   todoFormEl.addEventListener("submit", async e => {
+    document.body.classList.add("loading");
     e.preventDefault();
     const body = e.target.elements.body.value;
     const res = await api.post("/todos", {
       body,
       complete: false
     });
-    if (res.status === 201) {
-      drawTodoList();
-    }
-    // drawTodoList();
+    // if (res.status === 201) {
+    //   drawTodoList();
+    // }
+    // drawTodoList 함수의 실행이 끝날 떄까지 기다림
+    // Promise에는 undefined가 채워짐.
+    await drawTodoList();
+    document.body.classList.remove("loading");
   });
 
   list.forEach(todoItem => {
@@ -103,7 +107,9 @@ async function drawTodoList() {
     bodyEl.textContent = todoItem.body;
 
     completeEl.addEventListener("click", async e => {
-      e.preventDefault();
+      // 체크하는것을 막지 않으면 화면갱신이 먼저 일어나게 된다.
+      // 주석을 풀면 비관적 업데이트가 됨.
+      // e.preventDefault();
       console.log(todoItem.complete);
       await api.patch("/todos/" + todoItem.id, {
         // todoItem.complete ? true || false
