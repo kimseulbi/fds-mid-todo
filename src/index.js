@@ -65,13 +65,13 @@ async function drawTodoList() {
   const todoFormEl = fragment.querySelector(".todo-form");
   const logoutEl = fragment.querySelector(".logout");
 
-  logoutEl.addEventListener('click', e => {
+  logoutEl.addEventListener("click", e => {
     // 로그아웃 절차
     // 1. 토큰 삭제
-    localStorage.removeItem('token')
+    localStorage.removeItem("token");
     // 2. 로그인 폼 보여주기
-    drawLoginForm()
-  })
+    drawLoginForm();
+  });
 
   todoFormEl.addEventListener("submit", async e => {
     e.preventDefault();
@@ -92,11 +92,25 @@ async function drawTodoList() {
     // 2. 내용 채우고 이벤트 리스너 등록하기
     const bodyEl = fragment.querySelector(".body");
     const deleteButtonEl = fragment.querySelector(".delete-button");
-    const todoItemEl = fragment.querySelector(".todo-item");
+    // const todoItemEl = fragment.querySelector(".todo-item");
+    const completeEl = fragment.querySelector(".complete");
+
+    if (todoItem.complete) {
+      // 블리언 Attribute 추가
+      completeEl.setAttribute("checked", "");
+    }
+
     bodyEl.textContent = todoItem.body;
 
-    // 3. 문서 내부에 삽입하기
-    todoListEl.appendChild(fragment);
+    completeEl.addEventListener("click", async e => {
+      e.preventDefault();
+      console.log(todoItem.complete);
+      await api.patch("/todos/" + todoItem.id, {
+        // todoItem.complete ? true || false
+        complete: !todoItem.complete
+      });
+      drawTodoList();
+    });
 
     // * 삭제 기능 구현 전략 *
     // (내가 한 삭제)
@@ -108,17 +122,16 @@ async function drawTodoList() {
     // })
 
     // (선생님이 한 삭제)
-    deleteButtonEl.addEventListener('click', async e => {
+    deleteButtonEl.addEventListener("click", async e => {
       // 삭제 요청 보내기
-      await api.delete('/todos/'+ todoItem.id);
+      await api.delete("/todos/" + todoItem.id);
       // 성공시 할일 목록 다시 그리기
-      drawTodoList()
-    })
+      drawTodoList();
+    });
 
     //3. 문서 내부에 삽입하기
     todoListEl.appendChild(fragment);
   });
-
 
   // 3. 문서 내부에 삽입하기
   rootEl.textContent = "";
@@ -127,12 +140,10 @@ async function drawTodoList() {
 
 // 새로그리기
 // 만약 로그인을 한 상태라면 바로 할일 목록을 보여주고
-if (localStorage.getItem('token')){
-// token을 저장한 적이 있다면 true, 없다면 false
-  drawTodoList()
-} else{
+if (localStorage.getItem("token")) {
+  // token을 저장한 적이 있다면 true, 없다면 false
+  drawTodoList();
+} else {
   // 아니라면 로그인 폼을 보여준다.
-  drawLoginForm()
+  drawLoginForm();
 }
-
-
