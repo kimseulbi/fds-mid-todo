@@ -91,13 +91,21 @@ async function drawTodoList() {
 
     // * 삭제 기능 구현 전략 *
     // 1. 삭제 버튼을 눌렀을 때
+    // deleteButtonEl.addEventListener('click', async e => {
+    //   // 삭제 요청 보내기
+    //   // 성공 시 할일 목록 다시 그리기
+    //   todoListEl.removeChild(todoItemEl);
+    //   await api.delete(`/todos/${todoItem.id}`);
+    // })
     deleteButtonEl.addEventListener('click', async e => {
-      todoListEl.removeChild(todoItemEl);
-      await api.delete(`/todos/${todoItem.id}`);
+      // 삭제 요청 보내기
+      await api.delete('/todos/'+ todoItem.id);
+      // 성공시 할일 목록 다시 그리기
+      drawTodoList()
     })
-    // 2. 할 일 항목을 삭제하는 요청을 서버에 보내고
 
-    // 3. drawTodoList 함수를 호출해서 페이지를 새로 그린다. (edited)
+    //3. 문서 내부에 삽입하기
+    todoListEl.appendChild(fragment);
   });
 
 
